@@ -1,270 +1,232 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import Link from "next/link"
-import { ChevronLeft, ChevronRight } from "lucide-react"
 
-const heroImages = [
-  {
-    id: 1,
-    src: "/fashion.png",
-    title: "Glam Photography",
-    subtitle: "Capturing the unseen beauty",
-    category: "Glam",
-    description: "Where elegance meets artistry in every frame"
-  },
-  {
-    id: 2,
-    src: "/travel.png",
-    title: "Travel Brochure",
-    subtitle: "Stories from around the world",
-    category: "Travel",
-    description: "Documenting cultures and landscapes with purpose"
-  },
-  {
-    id: 3,
-    src: "/family.png",
-    title: "Family Photography",
-    subtitle: "Preserving precious moments",
-    category: "Family",
-    description: "Timeless memories captured with love and care"
-  },
-  {
-    id: 4,
-    src: "/corporate.png",
-    title: "Corporate Photography",
-    subtitle: "Professional excellence captured",
-    category: "Corporate",
-    description: "Building brand identity through compelling imagery"
-  },
+const galleryImages = [
+  { id: 1, src: "/GLAM/4.png",      category: "Glam",      label: "Glam Photography" },
+  { id: 2, src: "/Travel/1.png",    category: "Travel",    label: "Travel Brochure" },
+  { id: 3, src: "/Family/1.png",    category: "Family",    label: "Family Photography" },
+  { id: 4, src: "/CORPORATE/1.png", category: "Corporate", label: "Corporate Photography" },
+  { id: 5, src: "/GLAM/2.png",      category: "Glam",      label: "Glam — Series II" },
 ]
 
 export default function HeroCarousel() {
-  const [currentSlide, setCurrentSlide] = useState(0)
-  const [isLoaded, setIsLoaded] = useState(false)
+  const [active, setActive]         = useState(0)
+  const [prevActive, setPrevActive] = useState<number | null>(null)
+  const [isLoaded, setIsLoaded]     = useState(false)
+  const [isTransitioning, setIsTransitioning] = useState(false)
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
+
+  const go = (index: number) => {
+    if (isTransitioning || index === active) return
+    setPrevActive(active)
+    setIsTransitioning(true)
+    setActive(index)
+    setTimeout(() => {
+      setPrevActive(null)
+      setIsTransitioning(false)
+    }, 1200)
+  }
 
   useEffect(() => {
     setIsLoaded(true)
-    const interval = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % heroImages.length)
-    }, 8000)
-
-    return () => clearInterval(interval)
+    intervalRef.current = setInterval(() => {
+      setActive(prev => {
+        const next = (prev + 1) % galleryImages.length
+        setPrevActive(prev)
+        setIsTransitioning(true)
+        setTimeout(() => { setPrevActive(null); setIsTransitioning(false) }, 1200)
+        return next
+      })
+    }, 6000)
+    return () => { if (intervalRef.current) clearInterval(intervalRef.current) }
   }, [])
 
-  const goToNext = () => {
-    setCurrentSlide((prev) => (prev + 1) % heroImages.length)
-  }
-
-  const goToPrevious = () => {
-    setCurrentSlide((prev) => (prev - 1 + heroImages.length) % heroImages.length)
-  }
-
-  const goToSlide = (index: number) => {
-    setCurrentSlide(index)
-  }
-
   return (
-    <div className="relative h-screen w-full overflow-hidden">
-      {/* Background Images */}
-      <div className="absolute inset-0">
-        {heroImages.map((image, index) => (
-          <div
-            key={image.id}
-            className={`absolute inset-0 transition-all duration-2000 ease-out ${
-              index === currentSlide ? "opacity-100 scale-100" : "opacity-0 scale-110"
-            }`}
-          >
-            <img 
-              src={image.src} 
-              alt={image.title} 
-              className="w-full h-full object-cover"
-              loading={index === 0 ? "eager" : "lazy"}
-            />
-            {/* Desktop overlay - stronger on left, lighter on right */}
-            <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-black/20 lg:block hidden" />
-            {/* Mobile overlay - centered gradient */}
-            <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/60 to-black/80 lg:hidden" />
-          </div>
-        ))}
+    <div className="relative h-screen w-full bg-black overflow-hidden">
+
+      {/* ── BACKGROUND IMAGES ─────────────────────────── */}
+      {galleryImages.map((img, i) => (
+        <div
+          key={img.id}
+          className="absolute inset-0 transition-opacity duration-[1200ms] ease-in-out"
+          style={{ opacity: i === active ? 1 : 0, zIndex: i === active ? 2 : (i === prevActive ? 1 : 0) }}
+        >
+          <img
+            src={img.src}
+            alt={img.label}
+            className="w-full h-full object-cover"
+            loading={i === 0 ? "eager" : "lazy"}
+          />
+        </div>
+      ))}
+
+      {/* ── GRADIENT OVERLAYS ─────────────────────────── */}
+      {/* Primary dark veil */}
+      <div className="absolute inset-0 bg-black/55 z-10" />
+      {/* Dome radial highlight — bright center, dark edges */}
+      <div
+        className="absolute inset-0 z-10"
+        style={{
+          background:
+            "radial-gradient(ellipse 70% 60% at 50% 38%, rgba(255,255,255,0.03) 0%, rgba(0,0,0,0.0) 50%, rgba(0,0,0,0.55) 100%)",
+        }}
+      />
+      {/* Bottom fade for gallery strip */}
+      <div className="absolute bottom-0 left-0 right-0 h-56 bg-gradient-to-t from-black via-black/80 to-transparent z-10" />
+
+      {/* ── DOME ARCH SVG ─────────────────────────────── */}
+      <svg
+        className="absolute inset-0 w-full h-full z-10 pointer-events-none"
+        viewBox="0 0 1440 900"
+        preserveAspectRatio="xMidYMid slice"
+        aria-hidden="true"
+      >
+        {/* Outer dome arc */}
+        <path
+          d="M 60 920 C 60 420 300 80 720 80 C 1140 80 1380 420 1380 920"
+          stroke="rgba(255,255,255,0.10)"
+          strokeWidth="1"
+          fill="none"
+        />
+        {/* Inner dome arc */}
+        <path
+          d="M 160 920 C 160 460 360 160 720 160 C 1080 160 1280 460 1280 920"
+          stroke="rgba(255,255,255,0.06)"
+          strokeWidth="0.8"
+          fill="none"
+        />
+        {/* Subtle keystone top */}
+        <line x1="720" y1="78" x2="720" y2="180" stroke="rgba(255,255,255,0.12)" strokeWidth="0.6" />
+        {/* Horizontal rule at dome spring */}
+        <line x1="80"  y1="640" x2="1360" y2="640" stroke="rgba(255,255,255,0.06)" strokeWidth="0.5" />
+        {/* Left pillar */}
+        <line x1="80"  y1="640" x2="80"  y2="920" stroke="rgba(255,255,255,0.06)" strokeWidth="0.5" />
+        {/* Right pillar */}
+        <line x1="1360" y1="640" x2="1360" y2="920" stroke="rgba(255,255,255,0.06)" strokeWidth="0.5" />
+      </svg>
+
+      {/* ── VERTICAL SIDE LABELS ──────────────────────── */}
+      <div className="absolute left-6 top-1/2 -translate-y-1/2 z-20 hidden lg:block">
+        <p
+          className="text-white/20 text-[10px] tracking-[0.4em] uppercase font-light"
+          style={{ writingMode: "vertical-rl", transform: "rotate(180deg)" }}
+        >
+          Light · Story · Truth
+        </p>
+      </div>
+      <div className="absolute right-6 top-1/2 -translate-y-1/2 z-20 hidden lg:block">
+        <p
+          className="text-white/20 text-[10px] tracking-[0.4em] uppercase font-light"
+          style={{ writingMode: "vertical-rl" }}
+        >
+          Nairobi · Kenya · East Africa
+        </p>
       </div>
 
-      {/* Desktop Layout - Left Content Panel */}
-      <div className="absolute left-0 top-0 bottom-0 w-full lg:w-1/2 flex items-center z-20 px-6 sm:px-8 lg:px-12 xl:px-16 hidden lg:flex">
-        <div className={`max-w-lg transition-all duration-1000 ${isLoaded ? "slide-up" : "opacity-0"}`}>
-          
-          {/* Category Badge */}
-          <div className="inline-flex items-center gap-3 mb-6">
-            <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
-            <span className="text-white/80 font-light tracking-[0.2em] text-sm uppercase">
-              {heroImages[currentSlide].category}
-            </span>
-            <div className="w-8 h-px bg-white/30"></div>
-          </div>
+      {/* ── CENTRE CONTENT ────────────────────────────── */}
+      <div className="absolute inset-0 flex flex-col items-center justify-center z-20 text-center px-6">
 
-          {/* Main Title */}
-          <h1 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-cormorant font-light text-white mb-4 leading-tight">
-            {heroImages[currentSlide].title}
+        {/* Category pill */}
+        <div
+          className={`flex items-center gap-3 mb-8 transition-all duration-700 ${isLoaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`}
+          style={{ transitionDelay: "200ms" }}
+        >
+          <div className="w-1.5 h-1.5 bg-white/60 rounded-full" />
+          <span className="text-white/50 text-[11px] tracking-[0.35em] uppercase font-light">
+            {galleryImages[active].category}
+          </span>
+          <div className="w-8 h-px bg-white/20" />
+        </div>
+
+        {/* Photographer name — dome centrepiece */}
+        <div
+          className={`transition-all duration-1000 ${isLoaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}
+          style={{ transitionDelay: "400ms" }}
+        >
+          <h1 className="font-serif font-light text-white leading-none tracking-[0.08em] select-none"
+              style={{ fontSize: "clamp(4rem, 12vw, 11rem)" }}>
+            BOBBY
           </h1>
-
-          {/* Subtitle */}
-          <p className="text-sm sm:text-base lg:text-lg text-white/90 mb-6 leading-relaxed font-light max-w-md">
-            {heroImages[currentSlide].subtitle}
-          </p>
-
-          {/* Description */}
-          <p className="text-xs sm:text-sm text-white/70 mb-8 leading-relaxed max-w-sm font-light">
-            {heroImages[currentSlide].description}
-          </p>
-
-          {/* CTA Button */}
-          <Link
-            href="/gallery"
-            className="group inline-flex items-center gap-4 border-2 border-white/30 px-8 py-4 text-white/90 hover:text-white hover:border-white/50 hover:bg-white/10 transition-all duration-300"
-          >
-            <span className="font-medium tracking-wider text-sm">Explore Portfolio</span>
-            <div className="w-6 h-px bg-white/60 group-hover:w-8 group-hover:bg-white transition-all duration-300"></div>
-          </Link>
-        </div>
-      </div>
-
-      {/* Desktop Layout - Right Side Image Focus */}
-      <div className="absolute right-0 top-0 bottom-0 w-full lg:w-1/2 flex items-center justify-center z-10 hidden lg:flex">
-        <div className="relative w-full h-full flex items-center justify-center">
-          {/* Current Image Display */}
-          <div className="relative w-80 h-96 lg:w-96 lg:h-[28rem] xl:w-[28rem] xl:h-[32rem]">
-            <img 
-              src={heroImages[currentSlide].src} 
-              alt={heroImages[currentSlide].title}
-              className="w-full h-full object-cover rounded-lg shadow-2xl"
-            />
-            {/* Image overlay for better text readability */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent rounded-lg"></div>
-          </div>
-        </div>
-      </div>
-
-      {/* Mobile Layout - Centered Content */}
-      <div className="absolute inset-0 flex items-center justify-center z-20 px-4 sm:px-6 lg:hidden">
-        <div className={`text-center max-w-sm mx-auto transition-all duration-1000 ${isLoaded ? "slide-up" : "opacity-0"}`}>
-          
-          {/* Category Badge - Mobile */}
-          <div className="flex items-center justify-center gap-2 mb-4">
-            <div className="w-1.5 h-1.5 bg-white rounded-full animate-pulse"></div>
-            <span className="text-white/80 font-light tracking-wider text-xs uppercase">
-              {heroImages[currentSlide].category}
-            </span>
-            <div className="w-6 h-px bg-white/30"></div>
-          </div>
-
-          {/* Main Title - Mobile */}
-          <h1 className="text-xl sm:text-2xl font-cormorant font-light text-white mb-3 leading-tight">
-            {heroImages[currentSlide].title}
+          <h1 className="font-serif font-light text-white leading-none tracking-[0.08em] select-none"
+              style={{ fontSize: "clamp(4rem, 12vw, 11rem)" }}>
+            PALL
           </h1>
-
-          {/* Subtitle - Mobile */}
-          <p className="text-xs sm:text-sm text-white/90 mb-4 leading-relaxed font-light">
-            {heroImages[currentSlide].subtitle}
-          </p>
-
-          {/* CTA Button - Mobile */}
-          <Link
-            href="/gallery"
-            className="group inline-flex items-center gap-3 border border-white/30 px-6 py-3 text-white/90 hover:text-white hover:border-white/50 hover:bg-white/10 transition-all duration-300 rounded-lg"
-          >
-            <span className="font-medium tracking-wider text-sm">Explore Work</span>
-            <div className="w-4 h-px bg-white/60 group-hover:w-6 group-hover:bg-white transition-all duration-300"></div>
-          </Link>
         </div>
+
+
+        {/* Subtitle */}
+        <p
+          className={`text-white/50 text-[11px] sm:text-xs tracking-[0.35em] uppercase font-light mb-10 transition-all duration-1000 ${isLoaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`}
+          style={{ transitionDelay: "900ms" }}
+        >
+          East African Photographer
+        </p>
+
+        {/* CTA */}
+        <Link
+          href="/gallery"
+          className={`group inline-flex items-center gap-4 border border-white/20 px-8 py-3.5 text-white/70 hover:text-white hover:border-white/40 hover:bg-white/5 transition-all duration-400 text-sm tracking-[0.2em] uppercase font-light ${isLoaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`}
+          style={{ transitionDelay: "1100ms" }}
+        >
+          Explore the Gallery
+          <div className="w-5 h-px bg-white/40 group-hover:w-8 group-hover:bg-white/70 transition-all duration-300" />
+        </Link>
       </div>
 
-      {/* Navigation Controls - Desktop */}
-      <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-30 hidden lg:flex">
-        <div className="flex items-center gap-6">
-          {/* Previous Button */}
-          <button
-            onClick={goToPrevious}
-            className="p-3 bg-black/20 backdrop-blur-sm rounded-full hover:bg-black/40 transition-all duration-300 border border-white/20 group"
-            aria-label="Previous photo"
-          >
-            <ChevronLeft className="w-5 h-5 text-white group-hover:scale-110 transition-transform duration-300" />
-          </button>
-
-          {/* Slide Indicators */}
-          <div className="flex items-center gap-3">
-            {heroImages.map((_, index) => (
-              <button
-                key={index}
-                onClick={() => goToSlide(index)}
-                className={`w-3 h-3 rounded-full transition-all duration-300 ${
-                  index === currentSlide 
-                    ? 'bg-white scale-125' 
-                    : 'bg-white/30 hover:bg-white/50'
+      {/* ── BOTTOM GALLERY STRIP ──────────────────────── */}
+      <div className="absolute -bottom-5 left-0 right-0 z-20 px-4 sm:px-8 lg:px-16 pb-0">
+        <div className="flex h-[90px] sm:h-[110px] gap-1.5">
+          {galleryImages.map((img, i) => (
+            <button
+              key={img.id}
+              onClick={() => go(i)}
+              className={`flex-1 relative overflow-hidden group transition-all duration-500 focus:outline-none ${
+                i === active ? "flex-[1.8]" : "flex-1"
+              }`}
+              aria-label={`Show ${img.label}`}
+            >
+              <img
+                src={img.src}
+                alt={img.label}
+                className={`w-full h-full object-cover transition-all duration-500 ${
+                  i === active ? "opacity-90 scale-100" : "opacity-35 scale-105 group-hover:opacity-60 group-hover:scale-100"
                 }`}
-                aria-label={`Go to slide ${index + 1}`}
               />
-            ))}
-          </div>
-
-          {/* Next Button */}
-          <button
-            onClick={goToNext}
-            className="p-3 bg-black/20 backdrop-blur-sm rounded-full hover:bg-black/40 transition-all duration-300 border border-white/20 group"
-            aria-label="Next photo"
-          >
-            <ChevronRight className="w-5 h-5 text-white group-hover:scale-110 transition-transform duration-300" />
-          </button>
+              {/* Active indicator */}
+              {i === active && (
+                <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-white" />
+              )}
+              {/* Label on active */}
+              <div className={`absolute bottom-2 left-2 right-2 transition-all duration-300 ${i === active ? "opacity-100" : "opacity-0"}`}>
+                <p className="text-white text-[9px] tracking-[0.2em] uppercase truncate font-light">
+                  {img.label}
+                </p>
+              </div>
+            </button>
+          ))}
         </div>
       </div>
 
-      {/* Navigation Controls - Mobile */}
-      <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 z-30 lg:hidden">
-        <div className="flex items-center gap-4">
-          {/* Previous Button */}
-          <button
-            onClick={goToPrevious}
-            className="p-2 bg-black/20 backdrop-blur-sm rounded-full hover:bg-black/40 transition-all duration-300 border border-white/20 group"
-            aria-label="Previous photo"
-          >
-            <ChevronLeft className="w-4 h-4 text-white group-hover:scale-110 transition-transform duration-300" />
-          </button>
-
-          {/* Slide Indicators */}
-          <div className="flex items-center gap-2">
-            {heroImages.map((_, index) => (
-              <button
-                key={index}
-                onClick={() => goToSlide(index)}
-                className={`w-2 h-2 rounded-full transition-all duration-300 ${
-                  index === currentSlide 
-                    ? 'bg-white scale-125' 
-                    : 'bg-white/30 hover:bg-white/50'
-                }`}
-                aria-label={`Go to slide ${index + 1}`}
-              />
-            ))}
-          </div>
-
-          {/* Next Button */}
-          <button
-            onClick={goToNext}
-            className="p-2 bg-black/20 backdrop-blur-sm rounded-full hover:bg-black/40 transition-all duration-300 border border-white/20 group"
-            aria-label="Next photo"
-          >
-            <ChevronRight className="w-4 h-4 text-white group-hover:scale-110 transition-transform duration-300" />
-          </button>
+      {/* ── SLIDE COUNTER ─────────────────────────────── */}
+      <div className="absolute top-1/2 right-4 sm:right-8 -translate-y-1/2 z-20 hidden lg:block">
+        <div className="flex flex-col items-center gap-3">
+          {galleryImages.map((_, i) => (
+            <button
+              key={i}
+              onClick={() => go(i)}
+              aria-label={`Go to image ${i + 1}`}
+              className={`transition-all duration-400 rounded-full focus:outline-none ${
+                i === active
+                  ? "w-1.5 h-6 bg-white"
+                  : "w-1 h-1 bg-white/25 hover:bg-white/50"
+              }`}
+            />
+          ))}
         </div>
       </div>
 
-      {/* Slide Counter - Bottom Right Corner */}
-      <div className="absolute bottom-6 right-6 z-30">
-        <div className="text-right">
-          <div className="text-white/60 text-sm font-light tracking-wider mb-1">
-            {String(currentSlide + 1).padStart(2, "0")} / {String(heroImages.length).padStart(2, "0")}
-          </div>
-          <div className="w-12 h-px bg-white/30"></div>
-        </div>
-      </div>
     </div>
   )
 }

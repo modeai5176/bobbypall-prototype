@@ -11,7 +11,8 @@ const photographyStyles = [
     title: "Glam Photography",
     subtitle: "Capturing the unseen beauty",
     description:
-      "The successful model-photographer collaboration extends beyond the visible. It's about capturing the unseen – the fleeting expressions, the subtle gestures, and the emotions that breathe life into the composition.",
+      "Every glam session is a collaboration between light, expression, and the quiet confidence that lives within each subject. Bobby's approach moves past surface glamour to reveal the magnetic presence that makes a person truly unforgettable — transforming a single sitting into visual poetry that transcends ordinary portraiture.",
+    quote: "Beauty is not applied. It is drawn out — from within, through trust.",
     icon: Camera,
     heroImage: "/GLAM/4.png",
     galleryImages: [
@@ -21,14 +22,15 @@ const photographyStyles = [
       "/GLAM/5.png",
     ],
     services: ["Model Portraits", "Fashion Shoots", "Beauty Photography", "Editorial Work"],
-    approach: "Collaborative approach that brings out inner confidence and beauty",
+    approach: "Collaborative sessions that dismantle self-consciousness and reveal authentic radiance",
   },
   {
     id: "family",
     title: "Family Photography",
     subtitle: "Preserving precious moments",
     description:
-      "The successful model-photographer collaboration extends beyond the visible. It's about capturing the unseen – the fleeting expressions, the subtle gestures, and the emotions that breathe life into the composition.",
+      "Families are living stories — each chapter written in shared glances, inside jokes, and quiet touches. Bobby photographs the invisible threads that bind generations: the warmth of a grandmother's hand, the chaos of a Sunday kitchen, the unspoken love that defines what it means to belong. These are the images people will reach for in fifty years.",
+    quote: "A family portrait isn't about how you look. It's about who you are to each other.",
     icon: Users,
     heroImage: "/Family/3.png",
     galleryImages: [
@@ -38,14 +40,15 @@ const photographyStyles = [
       "/Family/5.png",
     ],
     services: ["Family Portraits", "Generational Photos", "Milestone Celebrations", "Candid Moments"],
-    approach: "Natural, relaxed sessions that capture authentic family connections",
+    approach: "Relaxed, unhurried sessions that let authentic family dynamics emerge naturally",
   },
   {
     id: "travel",
     title: "Travel Brochure",
     subtitle: "Stories from around the world",
     description:
-      "The successful model-photographer collaboration extends beyond the visible. It's about capturing the unseen – the fleeting expressions, the subtle gestures, and the emotions that breathe life into the composition.",
+      "From sun-scorched savannahs to rain-drenched highland valleys, Bobby documents East Africa and beyond with the eyes of an insider and the precision of a storyteller. His travel work doesn't merely show destinations — it makes you feel the dust on your skin, hear the silence of open plains at dawn, and understand the spirit of a place that no postcard ever could.",
+    quote: "The best travel photography doesn't take you somewhere. It brings that place home to you.",
     icon: Globe,
     heroImage: "/Travel/2.png",
     galleryImages: [
@@ -55,58 +58,61 @@ const photographyStyles = [
       "/Travel/5.png",
     ],
     services: ["Destination Photography", "Cultural Documentation", "Tourism Campaigns", "Travel Stories"],
-    approach: "Immersive storytelling that captures the essence of places and cultures",
+    approach: "Deep cultural immersion and community respect in every location visited",
   },
   {
     id: "corporate",
     title: "Corporate Photography",
     subtitle: "Professional excellence captured",
     description:
-      "The successful model-photographer collaboration extends beyond the visible. It's about capturing the unseen – the fleeting expressions, the subtle gestures, and the emotions that breathe life into the composition.",
+      "In business, image communicates before a single word is spoken. Bobby brings the same depth and intentionality to boardrooms and brand campaigns that he brings to his personal documentary work — producing imagery that conveys competence, trustworthiness, and the irreplaceable human dimension that great brands are built on.",
+    quote: "The most powerful corporate image is one that makes people feel — not just think.",
     icon: Building,
-    heroImage: "/corporate.png",
+    heroImage: "/CORPORATE/1.png",
     galleryImages: [
-      "/corporate.png",
-      "/corporate.png",
-      "/corporate.png",
-      "/corporate.png",
+      "/CORPORATE/1.png",
+      "/CORPORATE/2.png",
+      "/CORPORATE/1.png",
+      "/CORPORATE/2.png",
     ],
     services: ["Executive Portraits", "Team Photography", "Event Coverage", "Brand Imagery"],
-    approach: "Professional, polished photography that enhances corporate identity",
+    approach: "Purposeful, polished imagery that elevates corporate identity with authentic humanity",
   },
   {
     id: "fashion",
     title: "Fashion Brochure",
     subtitle: "Where style meets art",
     description:
-      "The successful model-photographer collaboration extends beyond the visible. It's about capturing the unseen – the fleeting expressions, the subtle gestures, and the emotions that breathe life into the composition.",
+      "Fashion photography at its finest is a conversation — between garment and body, concept and environment, culture and aspiration. Bobby's editorial approach brings cultural context and artistic vision to every shoot, producing work that speaks simultaneously to global sensibilities and the rich local identity of East African creative culture.",
+    quote: "Style without story is just fabric. Fashion photography must say something true.",
     icon: Palette,
-    heroImage: "/fashion.png",
+    heroImage: "/GLAM/3.png",
     galleryImages: [
-      "/fashion.png",
-      "/fashion.png",
-      "/fashion.png",
-      "/fashion.png",
+      "/GLAM/1.png",
+      "/GLAM/5.png",
+      "/GLAM/2.png",
+      "/GLAM/4.png",
     ],
     services: ["Editorial Fashion", "Brand Campaigns", "Designer Portfolios", "Creative Direction"],
-    approach: "Collaborative storytelling through style and substance",
+    approach: "Narrative-driven visual storytelling that fuses fashion craft with cultural identity",
   },
   {
     id: "flowers",
     title: "Flowers",
     subtitle: "Nature's delicate beauty",
     description:
-      "The successful model-photographer collaboration extends beyond the visible. It's about capturing the unseen – the fleeting expressions, the subtle gestures, and the emotions that breathe life into the composition.",
+      "In the ephemeral beauty of flowers, Bobby finds profound metaphors for the human condition — fleeting, perfect, and impossibly alive. His botanical work is meditation made visible: patient in observation, precise in execution, and deeply contemplative in its final expression. Each image is a reminder that perfection exists only in impermanence.",
+    quote: "A flower teaches you everything about life. It blooms fully, then lets go without regret.",
     icon: Flower,
-    heroImage: "/flower.png",
+    heroImage: "/Family/4.png",
     galleryImages: [
-      "/flower.png",
-      "/flower.png",
-      "/flower.png",
-      "/flower.png",
+      "/Family/4.png",
+      "/Family/5.png",
+      "/Travel/4.png",
+      "/Travel/5.png",
     ],
     services: ["Botanical Photography", "Nature Studies", "Artistic Compositions", "Fine Art Prints"],
-    approach: "Patient observation that reveals the hidden beauty in nature",
+    approach: "Slow, contemplative practice that reveals hidden geometry and transient beauty",
   },
 ]
 
@@ -164,7 +170,7 @@ export default function StylesPage() {
 
                     <blockquote className="border-l-2 border-white/20 pl-8 mb-10">
                       <p className="text-body text-white italic leading-relaxed">
-                        "The successful model-photographer collaboration extends beyond the visible. It's about capturing the unseen – the fleeting expressions, the subtle gestures, and the emotions that breathe life into the composition."
+                        "{style.quote}"
                       </p>
                     </blockquote>
                   </div>
